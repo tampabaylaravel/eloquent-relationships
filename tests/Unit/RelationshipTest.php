@@ -16,10 +16,11 @@ class RelationshipTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $user = factory(User::class)->create();
         $posts = factory(Post::class, 5)->make();
 
-        $this->user->posts()->saveMany($posts);
+        $user->posts()->saveMany($posts);
+        $this->user = $user->fresh();
     }
 
     /** @test */
@@ -27,5 +28,11 @@ class RelationshipTest extends TestCase
     {
         $this->assertEquals(5, Post::count());
         $this->assertEquals($this->user->posts()->get(), $this->user->posts);
+    }
+
+    /** @test */
+    public function belongsToQueryBuilderToInstanceVariable()
+    {
+        $this->assertEquals($this->user, Post::first()->user);
     }
 }
