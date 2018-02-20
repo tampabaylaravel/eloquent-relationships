@@ -32,4 +32,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    public function recentPosts()
+    {
+        return $this->posts()->where('created_at', '>', now()->subWeek());
+    }
 }

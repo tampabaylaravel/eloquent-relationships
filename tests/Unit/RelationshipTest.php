@@ -41,4 +41,14 @@ class RelationshipTest extends TestCase
     {
         $this->assertEquals($this->user, Post::first()->user);
     }
+
+    /** @test */
+    public function conditionalRelationship()
+    {
+        Post::first()->update([
+            'created_at' => now()->subDays(8),
+        ]);
+
+        $this->assertCount(4, $this->user->recentPosts);
+    }
 }
