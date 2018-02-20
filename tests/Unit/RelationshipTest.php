@@ -69,4 +69,14 @@ class RelationshipTest extends TestCase
 
         $this->assertCount(4, $user->posts);
     }
+
+    /**
+     * @test
+     *
+     * @expectedException BadMethodCallException
+     */
+    public Function whyDoesThisHappen()
+    {
+        $this->user->posts->create([]);
+    }
 }
