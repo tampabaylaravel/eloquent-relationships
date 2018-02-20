@@ -24,6 +24,12 @@ class RelationshipTest extends TestCase
     }
 
     /** @test */
+    public function relationshipWithParensIsDifferentThanWithout()
+    {
+        $this->assertNotEquals($this->user->posts(), $this->user->posts);
+    }
+
+    /** @test */
     public function hasManyQueryBuilderToInstanceVariable()
     {
         $this->assertEquals(5, Post::count());
