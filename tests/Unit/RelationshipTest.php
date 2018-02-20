@@ -51,4 +51,22 @@ class RelationshipTest extends TestCase
 
         $this->assertCount(4, $this->user->recentPosts);
     }
+
+    /** @test */
+    public function createRelatedRecords()
+    {
+        $user = factory(User::class)->create();
+
+        $postA = factory(Post::class)->create([
+            'user_id' => $user->id,
+        ]);
+
+        $postB = $user->posts()->save(factory(Post::class)->make());
+
+        $postC = $user->posts()->create([]);
+
+        $postD = factory(Post::class)->create()->user()->associate($user)->save();
+
+        $this->assertCount(4, $user->posts);
+    }
 }
