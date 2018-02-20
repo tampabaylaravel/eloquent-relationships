@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Post;
 use App\User;
 use Tests\TestCase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -78,5 +79,79 @@ class RelationshipTest extends TestCase
     public Function whyDoesThisHappen()
     {
         $this->user->posts->create([]);
+    }
+
+    /** @test */
+    public function lazyLoading()
+    {
+        $queryCount = 0;
+
+        DB::listen(function ($query) use (&$queryCount) {
+            $queryCount++;
+        });
+
+        $posts = Post::get();
+
+        foreach ($posts as $post) {
+            $post->user;
+        }
+
+        $this->assertEquals(6, $queryCount);
+    }
+
+    /** @test */
+    public function eagerLoading()
+    {
+        $queryCount = 0;
+
+        DB::listen(function ($query) use (&$queryCount) {
+            $queryCount++;
+        });
+
+        $posts = Post::with('user')->get();
+
+        foreach ($posts as $post) {
+            $post->user;
+        }
+
+        $this->assertEquals(2, $queryCount);
+    }
+
+    /** @test */
+    public function lazyEagerLoading()
+    {
+        $queryCount = 0;
+
+        DB::listen(function ($query) use (&$queryCount) {
+            $queryCount++;
+        });
+
+        $posts = Post::get();
+        $posts->load('user');
+
+        foreach ($posts as $post) {
+            $post->user;
+        }
+
+        $this->assertEquals(2, $queryCount);
+    }
+
+    /** @test */
+    public function howManyQueries()
+    {
+        $queryCount = 0;
+
+        DB::listen(function ($query) use (&$queryCount) {
+            $queryCount++;
+        });
+
+        $posts = Post::get();
+        $posts->load('user');
+
+        foreach ($posts as $post) {
+            $post->user()->first();
+        }
+
+        $this->assertNotEquals(2, $queryCount);
     }
 }
