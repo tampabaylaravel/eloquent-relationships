@@ -40,7 +40,8 @@ class RelationshipTest extends TestCase
     /** @test */
     public function belongsToQueryBuilderToInstanceVariable()
     {
-        $this->assertEquals($this->user, Post::first()->user);
+        $post = Post::first();
+        $this->assertEquals($post->user()->first(), $post->user);
     }
 
     /** @test */
